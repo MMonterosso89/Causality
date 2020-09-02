@@ -1,6 +1,6 @@
 ---
 title: "Causal Interence In Statistics - A Primer, By Judea Pearl et al"
-output: html_notebook
+output: rmarkdown::github_document
 ---
 # Walkthrough by Matthew Monterosso
 ![](C:\\Users\\Matth\\Desktop\\causal.jpg)
