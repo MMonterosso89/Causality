@@ -1,0 +1,69 @@
+---
+title: "Causal Interence In Statistics - A Primer, By Judea Pearl et al"
+output: html_notebook
+---
+# Walkthrough by Matthew Monterosso
+![](C:\\Users\\Matth\\Desktop\\causal.jpg)
+
+Here I'll use this rmd to walk through the book, practice some rmd formatting / latex, and learn causality! At the outset I'll state for the record I really don't know much beyond a vague sense of confounding and lurking variables. It's actually kind of funny that my (lack of) understanding is just about exactly as described in the preface for typical statistical teachings.
+
+It's also good to know that Causality can be considered *extra*-statistical and that the entire field has really only been explored in any large capacity in the past 20 years or so. So I guess it's fun to be on the bleeding edge! When an R package seems suitable for the exercises or a quick test, I will do my best to implement that as well.
+
+***
+
+## Study Questions 1.2.1
+
+**What is wrong with the following claims?**
+
+ * (a) *"Data show that income and marriage have a high positive correlation. Therefore, your earnings will increase if you get married."*
+
+
+Correlation is not causation. This simply means the two numbers happen to co-vary in step with each other, not that one "leads" to the other. Simple explanations for this could be that people only choose to get married if they can afford to, or people are more likely to be married the older they get (Survival Analysis?), and older people are purportedly further along in their careers and thus higher earners. Perhaps even the drive to earn increases as one acquires a family and needs to provide. Sounds awful!
+
+* (b) *"Data Shows that as the number of fire increases, so does the number of firefighters.Therefore, to cut down on fires, you should reduce the number of firefighters."*
+
+This is "causally flipped", if that makes sense? More firefighters have to respond to a larger or more fires to fight it appropriately. Reducing firefighters would quite obviously just increase the risk of encountering fire(s) with insufficient firefighters to respond to it.
+
+* (c) *"Data show that people who hurry tend to be late to their meetings. Don't hurry, or you'll be late"*
+
+They are hurrying because they are already late! This is obviously nonsensical, but I lack the proper vocabulary to explain why.Hurrying does not cause lateness, but is a symptom of it. Would it be correct to say those who are late are causally often hurrying? I honestly don't know at this juncture. 
+
+
+## Study Questions 1.2.2
+
+**A baseball batter Tim has a better batting average than his teammate Frank. However, someone notices that Frank has a better batting average than Tim against both right-handed and left-handed pitchers. How can this happen?**
+
+So yeah, this is definitely Simpson's Paradox at work. I have to say even after reading the chapter and staring at the contingency table in the pharma example. I'm still having trouble wrapping my head around how this is possible. I suppose that's what makes it a paradox! Let's see if we can't synthesize a table for this.It's tempting to use the same data as the books, but I'm going to try to create my own.
+
+
+$$ Batting Average = \frac{hits}{atbats} $$
+
+
+
+```{r}
+library(gt)
+library(tidyverse)
+Hand <- as.data.frame(c("Left-Handed", "Right-Handed", "Any"))
+colnames(Hand) <- "Pitcher Hand"
+Tim <- c("65/250","435/750", "500/1000")
+Frank <- c("250/750","220/250", "470/1000")
+
+df <- cbind(Hand,Tim, Frank)
+
+gt_tbl2 <- 
+  gt(data = df) %>%
+  tab_header(
+    title = "Simpson's Paradox in Baseball",
+    subtitle = "A Contrived Example!"
+  ) %>%
+  tab_spanner(
+    label = "Batter",
+    columns = vars(Tim, Frank)
+  )
+
+gt_tbl2
+
+
+
+```
+It really seems like these can only happen as a result of heavily imbalanced classes? Again I took a page from the book, but it seems to be taking advantage of the total bats differing largely "diagonally". As you can see above, Tim batted vs only 250 left-handers but 750 right-handers. Much less realistically, Frank did the opposite of this.
